@@ -1,0 +1,93 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<dataModel xmlns="http://xmlns.oracle.com/oxp/xmlp" version="2.1" xmlns:xdm="http://xmlns.oracle.com/oxp/xmlp" xmlns:xsd="http://wwww.w3.org/2001/XMLSchema" defaultDataSourceRef="Oracle BI EE">
+   <dataProperties>
+      <property name="include_parameters" value="true"/>
+      <property name="include_null_Element" value="false"/>
+      <property name="include_rowsettag" value="false"/>
+      <property name="exclude_tags_for_lob" value="false"/>
+      <property name="EXCLUDE_LINE_FEED_AND_CARRIAGE_RETURN_FOR_LOB" value="false"/>
+      <property name="xml_tag_case" value="upper"/>
+      <property name="generate_output_format" value="xml"/>
+      <property name="enforce_validation_status" value="true"/>
+      <property name="optimize_query_executions" value="false"/>
+      <property name="enable_xml_chunks" value=""/>
+      <property name="sql_monitor_report_generated" value="false"/>
+   </dataProperties>
+   <dataSets>
+      <dataSet name="RecjectedDetails" type="complex">
+         <sql>
+            <![CDATA[SET VARIABLE PREFERRED_CURRENCY='User Preferred Currency 1';SELECT
+   0 s_0,
+   "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Header Details"."Receipt Number" s_1,
+   "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Creation Date Line" s_2,
+   "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" s_3,
+   "Receiving - Purchase Receipts Real Time"."Purchase Order Header Details"."Order" s_4,
+   "Receiving - Purchase Receipts Real Time"."Supplier Profile"."Supplier Name" s_5,
+   "Receiving - Purchase Receipts Real Time"."Supplier Site"."Supplier Site Name" s_6
+FROM "Receiving - Purchase Receipts Real Time"
+WHERE
+("- Purchase Receipt Line Details"."Rejected Quantity" > 0)
+ORDER BY 5 ASC NULLS LAST, 2 ASC NULLS LAST, 4 ASC NULLS LAST, 6 ASC NULLS LAST, 7 ASC NULLS LAST, 3 ASC NULLS LAST
+FETCH FIRST 75001 ROWS ONLY]]>
+         </sql>
+      </dataSet>
+   </dataSets>
+   <output rootName="DATA_DS" uniqueRowName="false">
+      <nodeList name="data-structure">
+         <dataStructure tagName="DATA_DS">
+            <group name="G_1" label="G_1" source="RecjectedDetails">
+               <element name="s_0" value="s_0" label="s_0" dataType="xsd:integer" breakOrder="" fieldOrder="1"/>
+               <element name="ReceiptNumber" value="s_1" label="Receipt Number" dataType="xsd:string" breakOrder="None" fieldOrder="2"/>
+               <element name="CreationDate" value="s_2" label="CreationDate" dataType="xsd:date" breakOrder="" fieldOrder="3" formatMask=""/>
+               <element name="RejectedQuantity" value="s_3" label="RejectedQuantity" dataType="xsd:double" breakOrder="" fieldOrder="4"/>
+               <element name="PONumber" value="s_4" label="PONumber" dataType="xsd:string" breakOrder="" fieldOrder="5"/>
+               <element name="SupplierName" value="s_5" label="SupplierName" dataType="xsd:string" breakOrder="" fieldOrder="6"/>
+               <element name="SupplierSite" value="s_6" label="SupplierSite" dataType="xsd:string" breakOrder="" fieldOrder="7"/>
+            </group>
+         </dataStructure>
+      </nodeList>
+   </output>
+   <eventTriggers/>
+   <lexicals/>
+   <parameters/>
+   <valueSets/>
+   <bursting>
+      <burst name="Bursting1" enabled="true" type="sql" dssname="">
+         <property name="BURSTING_NODE" value="/DATA_DS/G_1"/>
+         <property name="DELIVERY_KEY" value="/DATA_DS/G_1"/>
+         <property name="IS_CONSOLIDATED_OUTPUT" value="true"/>
+         <property name="GROUP_DATABY_SPLITKEY" value="true"/>
+         <dataSet>
+            <sql dataSourceRef="ApplicationDB_FSCM">
+               <![CDATA[SELECT
+   'Single' as KEY,
+   'Rejected_Receipts_RPT' as TEMPLATE,
+   'en-US' as LOCALE,
+   'RTF' as OUTPUT_FORMAT,
+   'WCC' as DEL_CHANNEL,
+   'FA_UCM_PROVISIONED' as PARAMETER1,
+   'FAFusionImportExport' as PARAMETER2,
+   'anantha rangarajan' as PARAMETER3,
+   'WCLS' as PARAMETER4,
+   'SRRD_file' as PARAMETER5,
+   'Rejected Receipts Report' as PARAMETER6,
+   'nothing' as PARAMETER7,
+   'UCMFA03087696' as PARAMETER8,
+   'true' as PARAMETER9,
+   'Contribution Folders/PRM' as PARAMETER10
+FROM dual]]>
+            </sql>
+         </dataSet>
+      </burst>
+   </bursting>
+   <validations>
+      <validation>N</validation>
+   </validations>
+   <display>
+      <layouts>
+         <layout name="RecjectedDetails" left="341px" top="292px"/>
+         <layout name="DATA_DS" left="0px" top="34px"/>
+      </layouts>
+      <groupLinks/>
+   </display>
+</dataModel>

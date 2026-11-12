@@ -1,0 +1,19 @@
+release: 2
+built_by: "claude-check"
+package_sha256: ee3073ca9faef0b21614e671653d4031b8e3d2523e90cd09dde2ac57d8422131
+objects:
+  - path: "/shared/Custom/Procurement/SRRD_DM.xdm"
+    type: data_model
+    service: bip
+    added_as: dependency
+    content_hash: 6c13a934b913764c7ee1824c973da0513a77a64b6e9d0d7ca4157ac278852024
+  - path: "/shared/Custom/Procurement/SRRD_RPT.xdo"
+    type: report
+    service: bip
+    added_as: picked
+    content_hash: d6445a32cac0f3eba40cde95d686191071d10a0249e5471af51db26ce0bd365e
+  - path: "/shared/Custom/Procurement/SupplierReceiptRejectDetailsforHold"
+    type: analysis
+    service: otbi
+    added_as: picked
+    content_hash: 7c8aab65555445756a78852877a3edb4c24fd77a5c41f52f8afa5e3ab4d3c8d6

@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<security>
+   <policy rolename="BIAuthor" roleGUID="BIAuthor" roleDisplayName="BI Author Role">
+      <folderPermission>
+         <allow path="/Custom/Procurement/SRRD_DM.xdm" recursive="false" permissions="oracle.bi.publisher.fullControl,;&#x9; "/>
+      </folderPermission>
+   </policy>
+   <policy rolename="BIAdministrator" roleGUID="BIAdministrator" roleDisplayName="BI Administrator Role">
+      <folderPermission>
+         <allow path="/Custom/Procurement/SRRD_DM.xdm" recursive="false" permissions="oracle.bi.publisher.fullControl,;&#x9; "/>
+      </folderPermission>
+   </policy>
+   <policy rolename="BIConsumer" roleGUID="BIConsumer" roleDisplayName="BI Consumer Role">
+      <folderPermission>
+         <allow path="/Custom/Procurement/SRRD_DM.xdm" recursive="false" permissions="oracle.bi.publisher.fullControl,;&#x9; "/>
+      </folderPermission>
+   </policy>
+</security>
