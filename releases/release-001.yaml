@@ -1,0 +1,9 @@
+release: 1
+built_by: "Jaya Dharun R"
+package_sha256: c291a0525b2e3248274bccd0c83db259e1bc68a80d3de103dec9f7cd6351be3f
+objects:
+  - path: "/shared/Custom/Procurement/SupplierReceiptRejectDetailsforHold_1.xdm"
+    type: data_model
+    service: bip
+    added_as: picked
+    content_hash: 133e993effebefe1e8f43b89bbe86434c945a39ed9c46d4409302d3eaad06bbb

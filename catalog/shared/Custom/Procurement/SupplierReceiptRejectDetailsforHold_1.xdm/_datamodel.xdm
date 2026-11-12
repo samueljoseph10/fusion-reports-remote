@@ -1,0 +1,171 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<dataModel xmlns="http://xmlns.oracle.com/oxp/xmlp" version="2.1" xmlns:xdm="http://xmlns.oracle.com/oxp/xmlp" xmlns:xsd="http://wwww.w3.org/2001/XMLSchema" defaultDataSourceRef="Oracle BI EE">
+   <dataProperties>
+      <property name="include_parameters" value="true"/>
+      <property name="include_null_Element" value="false"/>
+      <property name="include_rowsettag" value="false"/>
+      <property name="exclude_tags_for_lob" value="false"/>
+      <property name="EXCLUDE_LINE_FEED_AND_CARRIAGE_RETURN_FOR_LOB" value="false"/>
+      <property name="enable_sqlid_logging" value="true"/>
+      <property name="xml_tag_case" value="upper"/>
+      <property name="generate_output_format" value="xml"/>
+      <property name="enforce_validation_status" value="true"/>
+      <property name="optimize_query_executions" value="false"/>
+      <property name="enable_xml_chunks" value=""/>
+      <property name="sql_monitor_report_generated" value="false"/>
+   </dataProperties>
+   <dataSets>
+      <dataSet name="SUPPLIER_SUMMARY" type="complex">
+         <sql>
+            <![CDATA[SET VARIABLE PREFERRED_CURRENCY='User Preferred Currency 1';
+
+SELECT
+
+"Receiving - Purchase Receipts Real Time"."Supplier Profile"."Supplier Name"
+   AS SUPPLIER_NAME,
+
+COUNT(DISTINCT "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Header Details"."Receipt Number")
+   AS TOTAL_RECEIPTS,
+
+SUM("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity")
+   AS TOTAL_RECEIVED_QTY,
+
+SUM("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity")
+   AS TOTAL_REJECTED_QTY,
+
+SUM(
+ "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity"
+ -
+ "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity"
+) AS TOTAL_ACCEPTED_QTY,
+
+ROUND(
+ SUM("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity") * 100.0
+ /
+ NULLIF(SUM("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity"),0),
+2) AS OVERALL_REJECT_PERCENT
+
+FROM "Receiving - Purchase Receipts Real Time"
+
+GROUP BY
+"Receiving - Purchase Receipts Real Time"."Supplier Profile"."Supplier Name"
+
+ORDER BY 1]]>
+         </sql>
+      </dataSet>
+      <dataSet name="RECEIPT_DETAILS" type="complex">
+         <sql>
+            <![CDATA[SET VARIABLE PREFERRED_CURRENCY='User Preferred Currency 1';
+
+SELECT
+
+"Receiving - Purchase Receipts Real Time"."Supplier Profile"."Supplier Name"
+   AS SUPPLIER_NAME,
+
+"Receiving - Purchase Receipts Real Time"."- Purchase Receipt Header Details"."Receipt Number"
+   AS RECEIPT_NUMBER,
+
+"Receiving - Purchase Receipts Real Time"."Purchase Order Header Details"."Order"
+   AS PO_NUMBER,
+
+"Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Creation Date Line"
+   AS RECEIPT_DATE,
+
+"Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity"
+   AS TOTAL_RECEIVED_QTY,
+
+"Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity"
+   AS REJECTED_QTY,
+
+-- %
+CASE 
+ WHEN "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity" = 0 
+ THEN 0
+ ELSE ROUND(
+   ("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" * 100.0)
+   /
+   "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity",
+ 2)
+END AS REJECT_PERCENT,
+
+-- STATUS
+CASE
+ WHEN "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" > 0
+ THEN 'REJECTED RECEIPT'
+ ELSE 'OK RECEIPT'
+END AS RECEIPT_STATUS,
+
+-- RISK
+CASE
+ WHEN "Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" = 0
+ THEN 'NO RISK'
+
+ WHEN ROUND(
+      ("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" * 100.0)
+      /
+      NULLIF("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity",0),
+      2) > 20
+ THEN 'HIGH RISK'
+
+ WHEN ROUND(
+      ("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Rejected Quantity" * 100.0)
+      /
+      NULLIF("Receiving - Purchase Receipts Real Time"."- Purchase Receipt Line Details"."Received Quantity",0),
+      2) BETWEEN 5 AND 20
+ THEN 'MEDIUM RISK'
+
+ ELSE 'LOW RISK'
+END AS RISK_LEVEL
+
+FROM "Receiving - Purchase Receipts Real Time"
+
+ORDER BY
+SUPPLIER_NAME,
+RECEIPT_NUMBER]]>
+         </sql>
+      </dataSet>
+   </dataSets>
+   <output rootName="DATA_DS" uniqueRowName="false">
+      <nodeList name="data-structure">
+         <dataStructure tagName="DATA_DS">
+            <group name="G_2" label="G_2" source="SUPPLIER_SUMMARY">
+               <element name="SUPPLIER_NAME" value="SUPPLIER_NAME" label="SUPPLIER_NAME" dataType="xsd:string" breakOrder="" fieldOrder="1"/>
+               <element name="TOTAL_RECEIPTS" value="TOTAL_RECEIPTS" label="TOTAL_RECEIPTS" dataType="xsd:double" breakOrder="" fieldOrder="2"/>
+               <element name="TOTAL_REJECTED_QTY" value="TOTAL_REJECTED_QTY" label="TOTAL_REJECTED_QTY" dataType="xsd:double" breakOrder="" fieldOrder="4"/>
+               <element name="TOTAL_ACCEPTED_QTY" value="TOTAL_ACCEPTED_QTY" label="TOTAL_ACCEPTED_QTY" dataType="xsd:double" breakOrder="" fieldOrder="5"/>
+               <element name="OVERALL_REJECT_PERCENT" value="OVERALL_REJECT_PERCENT" label="OVERALL_REJECT_PERCENT" dataType="xsd:double" breakOrder="" fieldOrder="6"/>
+               <element name="TOTAL_RECEIVED_QTY" value="TOTAL_RECEIVED_QTY" label="TOTAL_RECEIVED_QTY" dataType="xsd:double" breakOrder="" fieldOrder="3"/>
+               <group name="G_3" label="G_3" source="RECEIPT_DETAILS">
+                  <element name="SUPPLIER_NAME" value="SUPPLIER_NAME" label="SUPPLIER_NAME" dataType="xsd:string" breakOrder="" fieldOrder="1"/>
+                  <element name="RECEIPT_NUMBER" value="RECEIPT_NUMBER" label="RECEIPT_NUMBER" dataType="xsd:string" breakOrder="" fieldOrder="2"/>
+                  <element name="PO_NUMBER" value="PO_NUMBER" label="PO_NUMBER" dataType="xsd:string" breakOrder="" fieldOrder="3"/>
+                  <element name="TOTAL_RECEIVED_QTY" value="TOTAL_RECEIVED_QTY" label="TOTAL_RECEIVED_QTY" dataType="xsd:double" breakOrder="" fieldOrder="5"/>
+                  <element name="REJECTED_QTY" value="REJECTED_QTY" label="REJECTED_QTY" dataType="xsd:double" breakOrder="" fieldOrder="6"/>
+                  <element name="REJECT_PERCENT" value="REJECT_PERCENT" label="REJECT_PERCENT" dataType="xsd:double" breakOrder="" fieldOrder="7"/>
+                  <element name="RISK_LEVEL" value="RISK_LEVEL" label="RISK_LEVEL" dataType="xsd:string" breakOrder="" fieldOrder="9"/>
+                  <element name="RECEIPT_DATE" value="RECEIPT_DATE" label="RECEIPT_DATE" dataType="xsd:date" breakOrder="" fieldOrder="4" formatMask=""/>
+                  <element name="RECEIPT_STATUS" value="RECEIPT_STATUS" label="RECEIPT_STATUS" dataType="xsd:string" breakOrder="" fieldOrder="8"/>
+               </group>
+            </group>
+         </dataStructure>
+      </nodeList>
+   </output>
+   <eventTriggers/>
+   <lexicals/>
+   <parameters/>
+   <valueSets/>
+   <bursting/>
+   <validations>
+      <validation>N</validation>
+   </validations>
+   <display>
+      <layouts>
+         <layout name="SUPPLIER_SUMMARY" left="843px" top="228px"/>
+         <layout name="RECEIPT_DETAILS" left="471px" top="351px"/>
+         <layout name="DATA_DS" left="0px" top="323px"/>
+      </layouts>
+      <groupLinks>
+         <groupLink name="dl-796" parentGroup="G_2" childGroup="G_3"/>
+      </groupLinks>
+   </display>
+</dataModel>
